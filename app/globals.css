@@ -44,38 +44,39 @@ body {
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 84% 4.9%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    /* Mystical Gravity Falls Dark Theme */
+    --background: 220 13% 4%; /* Deep night sky #0B0D12 */
+    --foreground: 0 0% 100%; /* Pure white text */
+    --card: 220 13% 4%; /* Deep night sky */
+    --card-foreground: 0 0% 100%;
+    --popover: 220 13% 4%;
+    --popover-foreground: 0 0% 100%;
+    --primary: 120 100% 50%; /* Neon Emerald #00FF7F */
+    --primary-foreground: 220 13% 4%;
+    --secondary: 271 76% 53%; /* Mystic Violet #8A2BE2 */
+    --secondary-foreground: 0 0% 100%;
+    --muted: 220 13% 8%;
+    --muted-foreground: 0 0% 70%; /* Soft gray rgba(255, 255, 255, 0.7) */
+    --accent: 271 76% 53%;
+    --accent-foreground: 0 0% 100%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-    --chart-1: 220 70% 50%;
-    --chart-2: 160 60% 45%;
-    --chart-3: 30 80% 55%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
-    --sidebar-background: 222.2 84% 4.9%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
-    --sidebar-primary-foreground: 222.2 84% 4.9%;
-    --sidebar-accent: 217.2 32.6% 17.5%;
-    --sidebar-accent-foreground: 210 40% 98%;
-    --sidebar-border: 217.2 32.6% 17.5%;
-    --sidebar-ring: 224.3 76.3% 48%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 220 13% 12%;
+    --input: 220 13% 12%;
+    --ring: 120 100% 50%;
+    --chart-1: 120 100% 50%; /* Emerald */
+    --chart-2: 271 76% 53%; /* Violet */
+    --chart-3: 200 100% 50%; /* Cyan */
+    --chart-4: 300 100% 50%; /* Magenta */
+    --chart-5: 60 100% 50%; /* Yellow */
+    --sidebar-background: 220 13% 4%;
+    --sidebar-foreground: 0 0% 100%;
+    --sidebar-primary: 120 100% 50%;
+    --sidebar-primary-foreground: 220 13% 4%;
+    --sidebar-accent: 271 76% 53%;
+    --sidebar-accent-foreground: 0 0% 100%;
+    --sidebar-border: 220 13% 12%;
+    --sidebar-ring: 120 100% 50%;
   }
 }
 
@@ -86,59 +87,250 @@ body {
 
   body {
     @apply bg-background text-foreground;
+    background-image: 
+      radial-gradient(circle at 20% 80%, rgba(120, 119, 198, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, rgba(255, 119, 198, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 40% 40%, rgba(120, 219, 255, 0.2) 0%, transparent 50%);
+    background-attachment: fixed;
   }
 
   /* Custom scrollbar */
   ::-webkit-scrollbar {
-    width: 6px;
+    width: 8px;
   }
 
   ::-webkit-scrollbar-track {
-    @apply bg-gray-100 dark:bg-gray-800;
+    @apply bg-gray-900;
   }
 
   ::-webkit-scrollbar-thumb {
-    @apply bg-gray-300 dark:bg-gray-600;
-    border-radius: 3px;
+    @apply bg-emerald-500/30 rounded-full;
+    border: 1px solid rgba(0, 255, 127, 0.2);
   }
 
   ::-webkit-scrollbar-thumb:hover {
-    @apply bg-gray-400 dark:bg-gray-500;
+    @apply bg-emerald-500/50;
   }
 }
 
-/* Modern card styles */
+/* Mystical Animations */
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow {
+  0%, 100% { box-shadow: 0 0 5px rgba(0, 255, 127, 0.3); }
+  50% { box-shadow: 0 0 20px rgba(0, 255, 127, 0.6), 0 0 30px rgba(0, 255, 127, 0.4); }
+}
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0); }
+  50% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes swirl {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+@keyframes pulse-glow {
+  0%, 100% { 
+    box-shadow: 0 0 10px rgba(138, 43, 226, 0.3);
+    border-color: rgba(138, 43, 226, 0.5);
+  }
+  50% { 
+    box-shadow: 0 0 25px rgba(138, 43, 226, 0.6), 0 0 35px rgba(138, 43, 226, 0.4);
+    border-color: rgba(138, 43, 226, 0.8);
+  }
+}
+
+/* Modern card styles with mystical effects */
 .card {
-  @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border;
+  @apply bg-card/80 text-card-foreground rounded-xl shadow-lg border border-border/50;
+  backdrop-filter: blur(18px);
+  background: rgba(11, 13, 18, 0.8);
+  position: relative;
+  overflow: hidden;
+}
+
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(0, 255, 127, 0.5), transparent);
+  animation: glow 3s ease-in-out infinite;
 }
 
 .card-hover {
-  @apply transition-all duration-200 hover:shadow-md hover:border-border/50;
+  @apply transition-all duration-300 hover:shadow-2xl hover:border-emerald-500/30 hover:scale-[1.02];
+  animation: float 6s ease-in-out infinite;
 }
 
-/* Button styles */
+.card-hover:hover::before {
+  animation: glow 1.5s ease-in-out infinite;
+}
+
+/* Mystical button styles */
 .btn-primary {
-  @apply bg-primary hover:bg-primary/90 text-primary-foreground font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+  @apply bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-black font-bold px-6 py-3 rounded-lg transition-all duration-300;
+  box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-primary::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.btn-primary:hover::before {
+  left: 100%;
+}
+
+.btn-primary:hover {
+  box-shadow: 0 0 25px rgba(0, 255, 127, 0.6), 0 0 35px rgba(0, 255, 127, 0.4);
+  transform: translateY(-2px);
 }
 
 .btn-secondary {
-  @apply bg-secondary hover:bg-secondary/80 text-secondary-foreground font-medium px-4 py-2 rounded-lg transition-colors duration-200;
+  @apply bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white font-bold px-6 py-3 rounded-lg transition-all duration-300;
+  box-shadow: 0 0 15px rgba(138, 43, 226, 0.3);
 }
 
-/* Input styles */
+.btn-secondary:hover {
+  box-shadow: 0 0 25px rgba(138, 43, 226, 0.6), 0 0 35px rgba(138, 43, 226, 0.4);
+  transform: translateY(-2px);
+}
+
+/* Input styles with mystical glow */
 .input-modern {
-  @apply border-input focus:border-ring focus:ring-ring rounded-lg transition-colors duration-200 bg-background text-foreground;
+  @apply border-input focus:border-emerald-500 focus:ring-emerald-500/20 rounded-lg transition-all duration-300 bg-background/50 text-foreground;
+  backdrop-filter: blur(10px);
+}
+
+.input-modern:focus {
+  box-shadow: 0 0 15px rgba(0, 255, 127, 0.3);
 }
 
 /* Gradient backgrounds */
 .gradient-primary {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  background: linear-gradient(135deg, #00FF7F 0%, #8A2BE2 100%);
 }
 
 .gradient-secondary {
-  background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  background: linear-gradient(135deg, #8A2BE2 0%, #FF1493 100%);
 }
 
 .gradient-success {
-  background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  background: linear-gradient(135deg, #00FF7F 0%, #00CED1 100%);
 }
+
+/* Mystical floating elements */
+.floating {
+  animation: float 6s ease-in-out infinite;
+}
+
+.glow-effect {
+  animation: glow 3s ease-in-out infinite;
+}
+
+.pulse-glow {
+  animation: pulse-glow 2s ease-in-out infinite;
+}
+
+/* Sparkle effects */
+.sparkle {
+  position: relative;
+}
+
+.sparkle::after {
+  content: '✨';
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  font-size: 12px;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+/* Mystical background patterns */
+.mystical-bg {
+  background-image: 
+    radial-gradient(circle at 25% 25%, rgba(0, 255, 127, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 75% 75%, rgba(138, 43, 226, 0.1) 0%, transparent 50%),
+    linear-gradient(45deg, transparent 30%, rgba(0, 255, 127, 0.05) 50%, transparent 70%);
+  background-size: 100% 100%, 100% 100%, 200% 200%;
+}
+
+/* Glassmorphic panels */
+.glass-panel {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* Mystical borders */
+.mystical-border {
+  border: 1px solid transparent;
+  background: linear-gradient(45deg, rgba(0, 255, 127, 0.3), rgba(138, 43, 226, 0.3)) border-box;
+  border-radius: 8px;
+  position: relative;
+}
+
+.mystical-border::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 8px;
+  padding: 1px;
+  background: linear-gradient(45deg, rgba(0, 255, 127, 0.5), rgba(138, 43, 226, 0.5));
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+}
+
+/* Additional mystical effects */
+.bg-size-200 {
+  background-size: 200% 200%;
+}
+
+.bg-pos-0 {
+  background-position: 0% 50%;
+}
+
+.bg-pos-100 {
+  background-position: 100% 50%;
+}
+
+/* Mystical gradient text */
+.gradient-text {
+  background: linear-gradient(45deg, #00FF7F, #8A2BE2, #00FF7F);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  animation: swirl 3s ease-in-out infinite;
+}
+
+/* Floating particles */
+.floating-particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: float 4s ease-in-out infinite;
+  opacity: 0.6;
+}
+
+.floating-particle:nth-child(1) { animation-delay: 0s; }
+.floating-particle:nth-child(2) { animation-delay: 1s; }
+.floating-particle:nth-child(3) { animation-delay: 2s; }
+.floating-particle:nth-child(4) { animation-delay: 3s; }
+.floating-particle:nth-child(5) { animation-delay: 4s; }

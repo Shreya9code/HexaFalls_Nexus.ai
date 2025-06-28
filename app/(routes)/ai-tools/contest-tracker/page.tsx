@@ -155,12 +155,12 @@ export default function ContestTrackerPage() {
           placeholder="Search contests or platforms..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="px-3 py-2 border rounded w-full sm:w-1/2"
+          className="px-3 py-2 border border-border rounded w-full sm:w-1/2 bg-card text-card-foreground placeholder:text-muted-foreground focus:ring-2 focus:ring-emerald-500/60 focus:outline-none shadow-neon"
         />
         <select
           value={platform}
           onChange={(e) => setPlatform(e.target.value)}
-          className="px-3 py-2 border rounded w-full sm:w-1/4"
+          className="px-3 py-2 border border-border rounded w-full sm:w-1/4 bg-card text-card-foreground focus:ring-2 focus:ring-emerald-500/60 focus:outline-none shadow-neon"
         >
           <option value="All">All Platforms</option>
           {PLATFORMS.map((p) => (
@@ -184,16 +184,16 @@ export default function ContestTrackerPage() {
             const end = new Date(new Date(c.startTime).getTime() + c.duration * 1000).toISOString().replace(/[-:]|\.\d{3}/g, "").slice(0, 15);
             const calendarUrl = `https://calendar.google.com/calendar/r/eventedit?action=TEMPLATE&text=${encodeURIComponent(c.name)}&details=${encodeURIComponent(`Participate in ${c.name} on ${c.platform}`)}&dates=${start}/${end}`;
             return (
-              <div key={i} className="bg-white p-4 rounded-xl shadow">
+              <div key={i} className="bg-card/80 backdrop-blur-md border border-border p-4 rounded-xl shadow-lg transition-all duration-300 hover:shadow-blue-500/30 hover:ring-2 hover:ring-blue-400/40 ring-2 ring-emerald-500/40 shadow-neon">
                 <div className="flex items-center gap-2 mb-2">
                   <ContestPlatformIcon platform={mapPlatformToIconKey(c.platform)} />
-                  <h2 className="text-xl font-semibold">{c.name}</h2>
+                  <h2 className="text-xl font-semibold text-card-foreground drop-shadow-glow">{c.name}</h2>
                 </div>
-                <p className="text-sm">Starts: {new Date(c.startTime).toLocaleString()}</p>
-                <p className="text-sm">Duration: {Math.floor(c.duration / 3600)}h {((c.duration % 3600) / 60).toFixed(0)}m</p>
+                <p className="text-sm text-muted-foreground">Starts: {new Date(c.startTime).toLocaleString()}</p>
+                <p className="text-sm text-muted-foreground">Duration: {Math.floor(c.duration / 3600)}h {((c.duration % 3600) / 60).toFixed(0)}m</p>
                 <TimeRemaining startTime={c.startTime} />
-                <a href={c.url} target="_blank" className="text-blue-600 text-sm">Join Contest</a>
-                <a href={calendarUrl} target="_blank" className="text-sm text-blue-500">📅 Add to Calendar</a>
+                <a href={c.url} target="_blank" className="text-blue-400 hover:text-blue-300 text-sm font-semibold underline underline-offset-2 transition-colors">Join Contest</a>
+                <a href={calendarUrl} target="_blank" className="text-sm text-violet-400 hover:text-violet-300 font-semibold ml-2 underline underline-offset-2 transition-colors">📅 Add to Calendar</a>
               </div>
             );
           })}
@@ -228,14 +228,14 @@ export default function ContestTrackerPage() {
         ) : (
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {skills.map((s, i) => (
-              <div key={i} className="bg-white p-4 rounded-xl shadow">
-                <h3 className="font-semibold text-lg">{s.title}</h3>
-                <p className="text-sm text-gray-600">Platform: {s.platform}</p>
-                <p className="text-sm">Skill: {s.skill}</p>
-                <div className="w-full bg-gray-200 rounded-full h-2 mt-2">
-                  <div className="bg-blue-600 h-2 rounded-full" style={{ width: `${s.completedPercent}%` }} />
+              <div key={i} className="bg-card/80 backdrop-blur-md border border-border p-4 rounded-xl shadow-lg transition-all duration-300 hover:shadow-emerald-500/30 hover:ring-2 hover:ring-emerald-400/40 ring-2 ring-violet-500/40 shadow-neon">
+                <h3 className="font-semibold text-lg text-card-foreground drop-shadow-glow">{s.title}</h3>
+                <p className="text-sm text-muted-foreground">Platform: {s.platform}</p>
+                <p className="text-sm text-muted-foreground">Skill: {s.skill}</p>
+                <div className="w-full bg-muted rounded-full h-2 mt-2">
+                  <div className="bg-gradient-to-r from-blue-600 to-violet-600 h-2 rounded-full shadow-inner" style={{ width: `${s.completedPercent}%` }} />
                 </div>
-                <a href={s.url} target="_blank" className="text-blue-500 text-sm mt-2 inline-block">
+                <a href={s.url} target="_blank" className="text-emerald-400 hover:text-emerald-300 text-sm mt-2 inline-block font-semibold underline underline-offset-2 transition-colors">
                   View Course →
                 </a>
               </div>

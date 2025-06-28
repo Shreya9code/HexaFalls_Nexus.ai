@@ -6,63 +6,77 @@ import AiToolCard from "./AiToolCard";
 const tools = [
   {
     name: "AI Career Chat",
-    desc: "Get personalized career advice and guidance from our AI mentor. Ask questions about career paths, job search strategies, and professional development.",
+    desc: "Summon the ancient AI spirits for personalized career guidance. Ask questions about career paths, job search strategies, and professional development.",
     icon: "/globe.svg",
-    button: "Start Chat",
+    button: "🧭 Seer’s Compass ",
     path: "/ai-tools/ai-chat",
+    emoji: "🔮",
+    color: "emerald"
   },
   {
     name: "AI Resume Analyzer",
-    desc: "Upload your resume and get detailed feedback on content, formatting, and optimization suggestions to make it stand out to employers.",
+    desc: "Unlock the secrets hidden within your resume. Upload and receive mystical insights on content, formatting, and optimization to make it stand out.",
     icon: "/file.svg",
-    button: "Analyze Resume",
+    button: "📜Journal of Insights",
     path: "/ai-tools/ai-resume-analyzer",
+    emoji: "📜",
+    color: "violet"
   },
   {
     name: "Career Roadmap",
-    desc: "Generate a personalized career roadmap based on your goals, skills, and experience. Get step-by-step guidance for your career journey.",
+    desc: "Chart your path through the enchanted forest of career possibilities. Generate a personalized roadmap based on your goals, skills, and experience.",
     icon: "/grid.svg",
-    button: "Create Roadmap",
+    button: "🗺️ Create Map",
     path: "/ai-tools/ai-roadmap-agent",
+    emoji: "🗺️",
+    color: "cyan"
   },
   {
     name: "AI Mock Interview",
-    desc: "Practice interviews with our AI interviewer. Get real-time feedback on your responses and improve your interview skills.",
+    desc: "Face the digital temple guardian in practice interviews. Get real-time feedback on your responses and improve your interview skills.",
     icon: "/webcam.png",
-    button: "Start Interview",
+    button: "⚔️Mirror Realm Interviews:",
     path: "/ai-tools/AiMockInterview",
+    emoji: "⚔️",
+    color: "emerald"
   },
   {
     name: "Coding Contest Tracker",
-    desc: "Track coding contests and competitions. Stay updated with upcoming events and manage your participation.",
+    desc: "Track the great coding tournaments and competitions. Stay updated with upcoming events and manage your participation in the digital arena.",
     icon: "/ban.png",
-    button: "View Contests",
+    button: "🏆 Wishing Well Contests",
     path: "/ai-tools/contest-tracker",
+    emoji: "🏆",
+    color: "violet"
   },
   {
     name: "Quiz",
-    desc: "Test your knowledge and skills with AI-generated quizzes. Compete on the leaderboard and track your progress.",
+    desc: "Test your knowledge and skills with AI-generated mystical quizzes. Compete on the leaderboard and track your progress through the enchanted challenges.",
     icon: "/grid.svg",
-    button: "Start Quiz",
+    button: "🧠Mystery Quest",
     path: "/ai-tools/quiz",
+    emoji: "🧠",
+    color: "cyan"
   },
 ];
 
 const AiTools = () => {
   return (
-    <div className="space-y-6">
-      <div className="text-center lg:text-left">
-        <h2 className="text-3xl font-bold text-foreground mb-2">
-          Available AI Tools
+    <div className="space-y-8">
+      <div className="text-center">
+        <h2 className="text-4xl font-bold text-foreground mb-4 bg-gradient-to-r from-emerald-400 to-violet-400 bg-clip-text text-transparent">
+          
         </h2>
-        <p className="text-muted-foreground text-lg">
-          Start building and shape your career with smart tools
+        <p className="text-emerald-100 text-xl max-w-2xl mx-auto">
+          Choose your magical tools and begin your journey through the enchanted forest of career possibilities
         </p>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {tools.map((tool, index) => (
-          <AiToolCard key={index} tool={tool} />
+          <div key={index} className="floating" style={{ animationDelay: `${index * 0.2}s` }}>
+            <AiToolCard tool={tool} />
+          </div>
         ))}
       </div>
     </div>

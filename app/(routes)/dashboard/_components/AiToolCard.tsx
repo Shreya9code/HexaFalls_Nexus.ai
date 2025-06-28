@@ -10,7 +10,7 @@ import { v4 as uuidv4 } from "uuid";
 import ResumeUploadDialog from "./ResumeUploadDialog";
 import RoadmapGeneratorDialog from "./RoadmapGeneratorDialog";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
-import { ArrowRight } from 'lucide-react'
+import { ArrowRight, Sparkles } from 'lucide-react'
 
 interface TOOL {
   name: string;
@@ -18,6 +18,8 @@ interface TOOL {
   icon: string;
   button: string;
   path: string;
+  emoji?: string;
+  color?: string;
 }
 
 interface AiToolProps {
@@ -58,33 +60,64 @@ const AiToolCard = ({ tool }: AiToolProps) => {
     console.log("result after axios post", result);
     router.push(`${tool.path}/${id}`);
   };
+
+  const getColorClasses = (color?: string) => {
+    switch (color) {
+      case 'emerald':
+        return 'from-emerald-500/20 to-emerald-600/20 border-emerald-500/30 hover:border-emerald-400/50';
+      case 'violet':
+        return 'from-violet-500/20 to-violet-600/20 border-violet-500/30 hover:border-violet-400/50';
+      case 'cyan':
+        return 'from-cyan-500/20 to-cyan-600/20 border-cyan-500/30 hover:border-cyan-400/50';
+      default:
+        return 'from-emerald-500/20 to-emerald-600/20 border-emerald-500/30 hover:border-emerald-400/50';
+    }
+  };
   
   return (
     <>
-      <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-[1.02] border-border bg-card">
-        <CardHeader className="pb-4">
-          <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-blue-100 dark:bg-blue-900/30">
-              <div className="text-blue-600 dark:text-blue-400">
-                <Image src={tool.icon} alt={tool.name} width={24} height={24} />
+      <Card className={`group glass-panel mystical-border transition-all duration-500 hover:scale-[1.03] hover:shadow-2xl ${getColorClasses(tool.color)}`}>
+        <CardHeader className="pb-4 relative">
+          {/* Mystical glow effect */}
+          <div className="absolute inset-0 bg-gradient-to-br from-emerald-500/5 to-violet-500/5 rounded-t-xl"></div>
+          
+          <div className="relative z-10 flex items-center gap-4">
+            <div className={`p-4 rounded-xl bg-gradient-to-br ${getColorClasses(tool.color)} relative overflow-hidden`}>
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
+              <div className="relative z-10 flex items-center justify-center">
+                <Image src={tool.icon} alt={tool.name} width={28} height={28} className="filter brightness-0 invert" />
               </div>
+              {/* Floating sparkle */}
+              <Sparkles className="absolute -top-1 -right-1 h-3 w-3 text-emerald-400 animate-pulse" />
             </div>
-            <div>
-              <CardTitle className="text-lg font-semibold text-foreground">{tool.name}</CardTitle>
-              <CardDescription className="text-muted-foreground">{tool.desc}</CardDescription>
+            <div className="flex-1">
+              <div className="flex items-center gap-2 mb-2">
+                <span className="text-2xl">{tool.emoji}</span>
+                <CardTitle className="text-xl font-bold text-foreground bg-gradient-to-r from-emerald-400 to-violet-400 bg-clip-text text-transparent">
+                  {tool.name}
+                </CardTitle>
+              </div>
+              <CardDescription className="text-emerald-100 text-sm leading-relaxed">
+                {tool.desc}
+              </CardDescription>
             </div>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="relative">
           <Button 
             onClick={onClickButton}
             variant="outline" 
-            className="w-full group-hover:bg-primary group-hover:text-primary-foreground transition-colors duration-200 border-border hover:border-primary"
+            className={`w-full group-hover:bg-gradient-to-r ${getColorClasses(tool.color)} group-hover:text-white transition-all duration-300 border-current hover:scale-105 relative overflow-hidden`}
           >
-            {tool.button}
+            <span className="relative z-10">{tool.button}</span>
             <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
+            <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/20 to-violet-500/20 opacity-0 group-hover:opacity-100 transition-opacity"></div>
           </Button>
         </CardContent>
+        
+        {/* Mystical corner decorations */}
+        <div className="absolute top-2 right-2 text-emerald-400 text-xs animate-pulse">✨</div>
+        <div className="absolute bottom-2 left-2 text-violet-400 text-xs animate-pulse" style={{ animationDelay: '1s' }}>💫</div>
       </Card>
 
       <ResumeUploadDialog

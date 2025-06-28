@@ -355,14 +355,14 @@ export default function QuizGenerator() {
 
   // Progress Indicators Component (move inside so it can access state)
   const ProgressIndicators = () => (
-    <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-xl border border-blue-200 dark:border-blue-800">
+    <div className="mb-8 p-6 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-xl border border-blue-200 dark:border-blue-800 ring-2 ring-emerald-500/40 shadow-neon">
       <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
         <Target className="h-5 w-5 text-blue-600" />
         Your Progress
       </h3>
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Completion Percentage */}
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 ring-2 ring-emerald-500/40 shadow-neon">
           <div className="flex items-center gap-2 mb-2">
             <Trophy className="h-4 w-4 text-yellow-500" />
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Completion</span>
@@ -373,7 +373,7 @@ export default function QuizGenerator() {
           </div>
         </div>
         {/* Current Streak */}
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 ring-2 ring-emerald-500/40 shadow-neon">
           <div className="flex items-center gap-2 mb-2">
             <Flame className="h-4 w-4 text-orange-500" />
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Streak</span>
@@ -384,7 +384,7 @@ export default function QuizGenerator() {
           </div>
         </div>
         {/* Total XP */}
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 ring-2 ring-emerald-500/40 shadow-neon">
           <div className="flex items-center gap-2 mb-2">
             <Zap className="h-4 w-4 text-yellow-500" />
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Total XP</span>
@@ -395,7 +395,7 @@ export default function QuizGenerator() {
           </div>
         </div>
         {/* Next Level */}
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700 ring-2 ring-emerald-500/40 shadow-neon">
           <div className="flex items-center gap-2 mb-2">
             <Target className="h-4 w-4 text-green-500" />
             <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Next Level</span>
@@ -431,7 +431,7 @@ export default function QuizGenerator() {
           {popularTechnologies.map((tech) => (
             <button
               key={tech}
-              className={`flex flex-row items-center gap-6 min-h-20 px-8 py-6 rounded-xl border transition-all duration-200 shadow-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 flex-nowrap whitespace-nowrap w-full flex-1`}
+              className={`flex flex-row items-center gap-6 min-h-20 px-8 py-6 rounded-xl border transition-all duration-200 shadow-sm bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 hover:border-blue-400 focus:outline-none focus:ring-2 focus:ring-blue-200 flex-nowrap whitespace-nowrap w-full flex-1 ring-2 ring-violet-500/40 shadow-neon`}
               onClick={() => setSelectedPath(tech)}
             >
               <span className="text-2xl flex items-center justify-center whitespace-nowrap">{pathIcons[tech] || "📚"}</span>
@@ -653,14 +653,14 @@ export default function QuizGenerator() {
               </div>
               <div className="mb-8">
                 {quiz.map((q, idx) => (
-                  <div key={idx} className="mb-6 p-4 rounded-lg border bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                  <div key={idx} className="mb-6 p-4 rounded-lg border bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 ring-2 ring-violet-500/40 shadow-neon">
                     <h3 className="font-semibold mb-2">Q{idx + 1}: {q.question}</h3>
                     <div className="flex flex-col gap-2">
                       {q.options.map((option: string) => {
                         const isCorrect = option === q.answer;
                         const isSelected = userAnswers[idx] === option;
                         return (
-                          <div key={option} className={`px-4 py-2 rounded-lg border ${isCorrect ? 'border-green-500 bg-green-50 dark:bg-green-950' : isSelected ? 'border-red-500 bg-red-50 dark:bg-red-950' : 'border-gray-200 dark:border-gray-700'} flex items-center`}>
+                          <div key={option} className={`px-4 py-2 rounded-lg border ${isCorrect ? 'border-green-500 bg-green-50 dark:bg-green-950' : isSelected ? 'border-red-500 bg-red-50 dark:bg-red-950' : 'border-gray-200 dark:border-gray-700'} flex items-center ring-2 ring-violet-500/40 shadow-neon`}>
                             <span className="mr-2">{isSelected ? (isCorrect ? '✅' : '❌') : ''}</span>
                             <span>{option}</span>
                             {isCorrect && <span className="ml-2 text-green-600 font-bold">(Correct)</span>}
@@ -732,11 +732,11 @@ export default function QuizGenerator() {
             
             <form onSubmit={e => { e.preventDefault(); setSubmitted(true); }}>
               {quiz.map((q, idx) => (
-                <div key={idx} className="mb-6 p-4 rounded-lg border bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700">
+                <div key={idx} className="mb-6 p-4 rounded-lg border bg-white dark:bg-gray-900 border-gray-200 dark:border-gray-700 ring-2 ring-violet-500/40 shadow-neon">
                   <h3 className="font-semibold mb-2">Q{idx + 1}: {q.question}</h3>
                   <div className="flex flex-col gap-2">
                     {q.options.map((option: string) => (
-                      <label key={option} className={`px-4 py-2 rounded-lg border cursor-pointer ${userAnswers[idx] === option ? 'border-blue-600 bg-blue-50 dark:bg-blue-950' : 'border-gray-200 dark:border-gray-700'}`}> 
+                      <label key={option} className={`px-4 py-2 rounded-lg border cursor-pointer ${userAnswers[idx] === option ? 'border-blue-600 bg-blue-50 dark:bg-blue-950' : 'border-gray-200 dark:border-gray-700'} ring-2 ring-violet-500/40 shadow-neon`}> 
                         <input
                           type="radio"
                           name={`question-${idx}`}
