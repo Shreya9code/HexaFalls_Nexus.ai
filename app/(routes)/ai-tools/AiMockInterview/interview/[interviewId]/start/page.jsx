@@ -9,6 +9,7 @@ import RecordAnswerSection from "./_components/RecordAnswerSection";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import Webcam from "react-webcam";
 //import { getToken } from "@/services/GlobalServices";
 //import AssemblyAITranscriber from "./_components/socket";
 
@@ -26,6 +27,8 @@ function StartInterview({ params }) {
   const [enableMic, setEnableMic] = useState(false);
   const realtimeTranscriber = useRef(null);
   const [isFirstQuestionSpoken, setIsFirstQuestionSpoken] = useState(false);
+  const webcamRef = useRef(null);
+  const [mlAnalysisResult, setMlAnalysisResult] = useState(null);
 
   useEffect(() => {
     GetInterviewDetails();
@@ -287,139 +290,298 @@ function StartInterview({ params }) {
   }
 
   return (
-    <div className="space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-        <QuestionsSection
-          mockInterviewQuestion={mockInterviewQuestion}
-          activeQuestionIndex={activeQuestionIndex}
-        />
-        <RecordAnswerSection
-          mockInterviewQuestion={mockInterviewQuestion}
-          activeQuestionIndex={activeQuestionIndex}
-          interviewData={interviewData}
-          setActiveQuestionIndex={setActiveQuestionIndex}
-          setShowFeedback={setShowFeedback}
-          setFeedbackData={setFeedbackData}
-        />
-      </div>
-      
-      {/* AI Avatar section moved below the main content */}
-      <div className="flex justify-center items-center my-4">
-        <div className="relative">
-          {/* Pulsing ring to indicate speaking */}
-          <span className="absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75 animate-ping"></span>
-          {/* Avatar image */}
-          <Image
-            src="/logo.png?v=2"
-            alt="AI Avatar"
-            width={100}
-            height={100}
-            className="relative rounded-full border-4 border-blue-500 shadow-lg"
-          />
-          {/* Optional: animated "mouth" or sound waves */}
-          <span className="absolute bottom-2 left-1/2 -translate-x-1/2 flex space-x-1">
-            <span className="block w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-.2s]"></span>
-            <span className="block w-2 h-3 bg-blue-400 rounded-full animate-bounce [animation-delay:-.1s]"></span>
-            <span className="block w-2 h-4 bg-blue-300 rounded-full animate-bounce"></span>
-          </span>
-        </div>
-        <span className="ml-4 text-xl font-semibold text-blue-700">
-          AI is interviewing you...
-        </span>
-      </div>
-      
-      {showFeedback && feedbackData && (
-        <div className="mt-8 p-4 border rounded-lg bg-card">
-          <h3 className="text-lg font-semibold mb-2">Feedback</h3>
-          <p>
-            <strong>Rating:</strong> {feedbackData.rating}/5
-          </p>
-          <p>
-            <strong>Feedback:</strong> {feedbackData.feedback}
-          </p>
-          <p>
-            <strong>Correct Answer:</strong> {feedbackData.correctAns}
+    <div className="min-h-screen bg-background p-6">
+      <div className="max-w-7xl mx-auto space-y-6">
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-2xl font-bold text-foreground">
+            AI Mock Interview
+          </h1>
+          <p className="text-muted-foreground">
+            Question {activeQuestionIndex + 1} of {mockInterviewQuestion.length}
           </p>
         </div>
-      )}
-      {/*enableMic ? (
-        <Button onClick={disconnect}>Disconnect from Server</Button>
-      ) : (
-        <Button onClick={connectToServer}>Connect to Server</Button>
-      )*/}
-      <div className="flex justify-end gap-4">
-        {activeQuestionIndex > 0 && (
-          <Button
-            onClick={() => {
-              setActiveQuestionIndex(activeQuestionIndex - 1);
-              setShowFeedback(false);
-              setFeedbackData(null);
-            }}
-            variant="outline"
-          >
-            Previous Question
-          </Button>
-        )}
-        {activeQuestionIndex < mockInterviewQuestion.length - 1 && (
-          <Button
-            onClick={() => {
-              setActiveQuestionIndex(activeQuestionIndex + 1);
-              setShowFeedback(false);
-              setFeedbackData(null);
-            }}
-            variant="outline"
-          >
-            Next Question
-          </Button>
-        )}
-        {activeQuestionIndex === mockInterviewQuestion.length - 1 && (
-          <Button onClick={handleEndInterview} disabled={loading}>
-            End Interview
-          </Button>
-        )}
-      </div>
-      <div className="mt-8">
-        <div className="bg-card rounded-lg shadow-md p-4 max-w-2xl mx-auto">
-          <h2 className="text-lg font-semibold mb-4 text-blue-700">
-            Chat Section
-          </h2>
-          <div
-            className="h-64 overflow-y-auto space-y-4 px-2"
-            id="chat-transcript"
-          >
-            {/* Example messages, replace with your dynamic transcript data */}
-            <div className="flex items-start gap-2">
-              <div className="flex-shrink-0">
-                <Image
-                  src="/logo.png?v=2"
-                  alt="AI"
-                  width={32}
-                  height={32}
-                  className="rounded-full border border-blue-400"
-                />
+
+        {/* Video Call Interface */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* AI Window */}
+          <div className="space-y-4">
+            <div className="bg-card border rounded-lg overflow-hidden">
+              <div className="bg-gradient-to-r from-blue-500 to-purple-500 p-4">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <span className="text-xl">🤖</span>
+                  AI Interviewer
+                </h2>
               </div>
-              <div>
-                <div className="bg-muted text-foreground rounded-lg px-3 py-2 text-sm shadow">
-                  Hello! I am your AI interviewer. Let's get started.
+              <div className="p-6">
+                {/* AI Video Window */}
+                <div className="relative bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-950 dark:to-purple-950 rounded-lg p-4 mb-4">
+                  <div className="flex justify-center items-center">
+                    <div className="relative w-full max-w-md">
+                      <div className="relative w-full h-[300px] bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 rounded-lg flex items-center justify-center">
+                        {/* Pulsing ring to indicate speaking */}
+                        <span className="absolute inline-flex h-full w-full rounded-lg bg-blue-400 opacity-75 animate-ping"></span>
+                        {/* AI Avatar */}
+                        <Image
+                          src="/logo.png?v=2"
+                          alt="AI Avatar"
+                          width={200}
+                          height={200}
+                          className="relative rounded-lg border-4 border-blue-500 shadow-lg"
+                        />
+                        {/* Animated sound waves */}
+                        <span className="absolute bottom-4 left-1/2 -translate-x-1/2 flex space-x-1">
+                          <span className="block w-2 h-2 bg-blue-500 rounded-full animate-bounce [animation-delay:-.2s]"></span>
+                          <span className="block w-2 h-3 bg-blue-400 rounded-full animate-bounce [animation-delay:-.1s]"></span>
+                          <span className="block w-2 h-4 bg-blue-300 rounded-full animate-bounce"></span>
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-center mt-4">
+                    <p className="text-lg font-semibold text-blue-700 dark:text-blue-400">
+                      AI is interviewing you...
+                    </p>
+                  </div>
                 </div>
-                <div className="text-xs text-gray-400 mt-1">AI</div>
+
+                {/* Current Question */}
+                <div className="bg-muted rounded-lg p-4">
+                  <h3 className="font-semibold text-foreground mb-2">Current Question:</h3>
+                  <p className="text-foreground leading-relaxed">
+                    {mockInterviewQuestion[activeQuestionIndex]?.question || "Loading question..."}
+                  </p>
+                </div>
               </div>
             </div>
-            <div className="flex items-start gap-2 flex-row-reverse">
-              <div className="flex-shrink-0">
-                <span className="inline-block w-8 h-8 rounded-full bg-gray-300 text-gray-700 flex items-center justify-center font-bold">
-                  U
-                </span>
-              </div>
-              <div>
-                <div className="bg-muted text-foreground rounded-lg px-3 py-2 text-sm shadow">
-                  Thank you! I'm ready for the interview.
-                </div>
-                <div className="text-xs text-gray-400 mt-1 text-right">You</div>
+
+            {/* Question Progress */}
+            <div className="bg-card border rounded-lg p-6">
+              <h3 className="text-lg font-semibold text-foreground mb-4">
+                Question Progress
+              </h3>
+              <div className="grid grid-cols-5 gap-2">
+                {mockInterviewQuestion.map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => {
+                      setActiveQuestionIndex(index);
+                      setShowFeedback(false);
+                      setFeedbackData(null);
+                    }}
+                    className={`p-3 rounded-lg text-sm font-medium transition-all duration-200 ${
+                      index === activeQuestionIndex
+                        ? 'bg-primary text-primary-foreground'
+                        : index < activeQuestionIndex
+                        ? 'bg-green-100 dark:bg-green-900 text-green-700 dark:text-green-300 border border-green-200 dark:border-green-700'
+                        : 'bg-muted text-muted-foreground border border-border hover:bg-accent'
+                    }`}
+                  >
+                    {index + 1}
+                  </button>
+                ))}
               </div>
             </div>
-            {/* More messages here */}
           </div>
+
+          {/* User Window */}
+          <div className="space-y-4">
+            <div className="bg-card border rounded-lg overflow-hidden">
+              <div className="bg-gradient-to-r from-green-500 to-blue-500 p-4">
+                <h2 className="text-lg font-semibold text-white flex items-center gap-2">
+                  <span className="text-xl">👤</span>
+                  You (Candidate)
+                </h2>
+              </div>
+              <div className="p-6">
+                {/* User Video Window */}
+                <div className="relative bg-gradient-to-br from-green-50 to-blue-50 dark:from-green-950 dark:to-blue-950 rounded-lg p-4 mb-4">
+                  <div className="flex justify-center items-center">
+                    <div className="relative w-full max-w-md">
+                      <Image src={'/webcam.png'} width={400} height={300} alt='webcam' className="absolute w-full h-full object-cover rounded-lg" />
+                      <Webcam
+                        ref={webcamRef}
+                        mirrored={true}
+                        style={{
+                          width: '100%',
+                          height: '300px',
+                          zIndex: 10,
+                          borderRadius: '8px',
+                          objectFit: 'cover'
+                        }}
+                      />
+                    </div>
+                  </div>
+                  <div className="text-center mt-4">
+                    <p className="text-lg font-semibold text-green-700 dark:text-green-400">
+                      Ready to answer...
+                    </p>
+                  </div>
+                </div>
+
+                {/* Recording Controls */}
+                <div className="space-y-4">
+                  <RecordAnswerSection
+                    mockInterviewQuestion={mockInterviewQuestion}
+                    activeQuestionIndex={activeQuestionIndex}
+                    interviewData={interviewData}
+                    setActiveQuestionIndex={setActiveQuestionIndex}
+                    setShowFeedback={setShowFeedback}
+                    setFeedbackData={setFeedbackData}
+                    webcamRef={webcamRef}
+                    setMlAnalysisResult={setMlAnalysisResult}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Analysis Section - Below both windows */}
+        <div className="bg-card border rounded-lg p-6">
+          <h2 className="text-lg font-semibold text-foreground mb-4 text-center">
+            📊 Video Analysis Results
+          </h2>
+          <div className="space-y-4">
+            {/* Analysis content will be rendered here */}
+            {mlAnalysisResult && (
+              <div className="space-y-6">
+                {/* Duration and Metrics Row */}
+                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                  <div className="bg-background p-4 rounded-lg border text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Duration</div>
+                    <div className="text-xl font-bold text-primary">
+                      {mlAnalysisResult.duration_seconds || mlAnalysisResult.facial_metrics?.duration_seconds || 'N/A'}s
+                    </div>
+                  </div>
+                  <div className="bg-background p-4 rounded-lg border text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Face Visibility</div>
+                    <div className="text-xl font-bold text-primary">
+                      {mlAnalysisResult.facial_analysis?.face_visibility || mlAnalysisResult.facial_metrics?.face_visibility || 0}%
+                    </div>
+                  </div>
+                  <div className="bg-background p-4 rounded-lg border text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Eye Contact</div>
+                    <div className="text-xl font-bold text-primary">
+                      {mlAnalysisResult.facial_analysis?.eye_contact || mlAnalysisResult.facial_metrics?.eye_contact || 0}%
+                    </div>
+                  </div>
+                  <div className="bg-background p-4 rounded-lg border text-center">
+                    <div className="text-sm text-muted-foreground mb-1">Facial Stability</div>
+                    <div className="text-xl font-bold text-primary">
+                      {mlAnalysisResult.facial_analysis?.facial_stability || mlAnalysisResult.facial_metrics?.facial_stability || 0}%
+                    </div>
+                  </div>
+                </div>
+
+                {/* Feedback and Suggestions Row */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-background p-4 rounded-lg border">
+                    <h5 className="font-semibold text-foreground mb-3">💬 Facial Expression Feedback</h5>
+                    <p className="text-sm text-foreground leading-relaxed">
+                      {mlAnalysisResult.facial_expression_feedback || mlAnalysisResult.facialAnalysis?.feedback || 'No feedback available'}
+                    </p>
+                  </div>
+                  <div className="bg-background p-4 rounded-lg border">
+                    <h5 className="font-semibold text-foreground mb-3">💡 Suggestions</h5>
+                    <ul className="space-y-1">
+                      {(mlAnalysisResult.facial_suggestions || mlAnalysisResult.facialAnalysis?.suggestions || []).slice(0, 3).map((suggestion, index) => (
+                        <li key={index} className="flex items-start text-sm text-foreground">
+                          <span className="text-primary mr-2 font-bold">•</span>
+                          <span>{suggestion}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+
+                {/* Speech Analysis (if available) */}
+                {mlAnalysisResult.speechAnalysis && (
+                  <div className="bg-background p-4 rounded-lg border">
+                    <h5 className="font-semibold text-foreground mb-3">🎤 Speech Analysis</h5>
+                    <p className="text-sm text-foreground mb-2">
+                      <strong>Feedback:</strong> {mlAnalysisResult.speechAnalysis.feedback}
+                    </p>
+                    {mlAnalysisResult.speechAnalysis.suggestions && mlAnalysisResult.speechAnalysis.suggestions.length > 0 && (
+                      <div>
+                        <p className="text-sm font-medium text-primary mb-1">Suggestions:</p>
+                        <ul className="text-sm text-muted-foreground space-y-1">
+                          {mlAnalysisResult.speechAnalysis.suggestions.map((suggestion, index) => (
+                            <li key={index} className="flex items-start">
+                              <span className="text-primary mr-2">•</span>
+                              {suggestion}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Feedback */}
+        {showFeedback && feedbackData && (
+          <div className="bg-card border rounded-lg p-6">
+            <h2 className="text-lg font-semibold text-foreground mb-4">
+              AI Feedback
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-muted rounded-lg p-4">
+                <h3 className="font-semibold text-foreground mb-2">Rating</h3>
+                <div className="text-2xl font-bold text-primary">{feedbackData.rating}/5</div>
+              </div>
+              <div className="bg-muted rounded-lg p-4">
+                <h3 className="font-semibold text-foreground mb-2">Feedback</h3>
+                <p className="text-foreground">{feedbackData.feedback}</p>
+              </div>
+              <div className="bg-muted rounded-lg p-4">
+                <h3 className="font-semibold text-foreground mb-2">Correct Answer</h3>
+                <p className="text-foreground">{feedbackData.correctAns}</p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Navigation */}
+        <div className="flex justify-center gap-4">
+          {activeQuestionIndex > 0 && (
+            <Button
+              onClick={() => {
+                setActiveQuestionIndex(activeQuestionIndex - 1);
+                setShowFeedback(false);
+                setFeedbackData(null);
+              }}
+              variant="outline"
+              className="px-6"
+            >
+              ← Previous
+            </Button>
+          )}
+          {activeQuestionIndex < mockInterviewQuestion.length - 1 && (
+            <Button
+              onClick={() => {
+                setActiveQuestionIndex(activeQuestionIndex + 1);
+                setShowFeedback(false);
+                setFeedbackData(null);
+              }}
+              variant="outline"
+              className="px-6"
+            >
+              Next →
+            </Button>
+          )}
+          {activeQuestionIndex === mockInterviewQuestion.length - 1 && (
+            <Button 
+              onClick={handleEndInterview} 
+              disabled={loading}
+              className="px-6"
+            >
+              End Interview
+            </Button>
+          )}
         </div>
       </div>
     </div>

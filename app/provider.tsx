@@ -48,18 +48,33 @@ function Provider({
     }
 
     useEffect(() => {
-        user && createNewUser();
+        if (user && user.primaryEmailAddress?.emailAddress) {
+            createNewUser();
+        }
     }, [user]);
 
     const createNewUser = async () => {
-    try {
-        const result = await axios.post('/api/user',{});
-        console.log('User created:', result.data);
-    } catch (error) {
-        console.error('Error creating user:', error);
+        if (!user || !user.primaryEmailAddress?.emailAddress) {
+            console.log('User not ready yet or missing email');
+            return;
+        }
         
+        try {
+            console.log('Attempting to create user with email:', user.primaryEmailAddress.emailAddress);
+            const result = await axios.post('/api/user', {});
+            console.log('User created:', result.data);
+        } catch (error: any) {
+            console.error('Error creating user:', error);
+            if (error.response) {
+                console.error('Response status:', error.response.status);
+                console.error('Response data:', error.response.data);
+            } else if (error.request) {
+                console.error('No response received:', error.request);
+            } else {
+                console.error('Error setting up request:', error.message);
+            }
+        }
     }
-}
 
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>

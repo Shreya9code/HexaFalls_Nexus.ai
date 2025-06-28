@@ -1,6 +1,6 @@
 import { SidebarTrigger } from '@/components/ui/sidebar'
 import { UserButton } from '@clerk/nextjs'
-import { Bell, Search, Sun, Moon, RefreshCw, Sparkles, Wand2 } from 'lucide-react'
+import { Bell, Sun, Moon, RefreshCw, Sparkles, Wand2 } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
 import { useTheme } from '../provider'
 import Link from 'next/link'
@@ -36,14 +36,6 @@ function AppHeader() {
             <div className='relative z-10 flex items-center justify-between w-full'>
                 <div className='flex items-center gap-4'>
                     <SidebarTrigger className="p-2 hover:bg-emerald-500/10 rounded-lg transition-colors border border-emerald-500/20" />
-                    <div className="relative">
-                        <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-emerald-400 h-4 w-4" />
-                        <input
-                            type="text"
-                            placeholder="Search the mystical realm..."
-                            className="pl-10 pr-4 py-2 border border-emerald-500/30 rounded-lg focus:outline-none focus:ring-2 focus:ring-emerald-500/20 focus:border-emerald-500/50 w-64 bg-background/50 text-foreground backdrop-blur-sm"
-                        />
-                    </div>
                 </div>
                 
                 <div className='flex items-center gap-4'>

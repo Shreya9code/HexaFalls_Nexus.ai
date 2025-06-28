@@ -20,25 +20,25 @@ function RecordAnswerSection({
     mockInterviewQuestion, 
     activeQuestionIndex, 
     interviewData, 
-    setActiveQuestionIndex
+    setActiveQuestionIndex,
+    webcamRef,
+    setMlAnalysisResult
 }) {
     const [userAnswer, setUserAnswer] = useState('');
     const { user } = useUser();
     const [loading, setLoading] = useState(false);
+    const [isRecording, setIsRecording] = useState(false);
     const [isVideoRecording, setIsVideoRecording] = useState(false);
     const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
     const [analysisCompleted, setAnalysisCompleted] = useState(false);
-    const [mlAnalysisResult, setMlAnalysisResult] = useState(null);
     const mediaRecorderRef = useRef(null);
     const videoStreamRef = useRef(null);
     const audioStreamRef = useRef(null);
-    const webcamRef = useRef(null);
     const router = useRouter();
     
     const {
         error,
         interimResult,
-        isRecording,
         results,
         startSpeechToText,
         stopSpeechToText,
@@ -67,13 +67,47 @@ function RecordAnswerSection({
 
     // Automatically save answer when recording stops and transcript is not empty
     useEffect(() => {
-        if (!isRecording && latestTranscript?.trim().length > 0) {
+        if (!isRecording && !isVideoRecording && latestTranscript?.trim().length > 0) {
             UpdateUserAnswer();
-        } else if (!isRecording && latestTranscript?.trim().length === 0) {
+        } else if (!isRecording && !isVideoRecording && latestTranscript?.trim().length === 0) {
             toast('Please say something to record your answer.');
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isRecording]);
+    }, [isRecording, isVideoRecording]);
+
+    // Unified recording function that handles both audio and video
+    const handleRecording = async () => {
+        if (isRecording || isVideoRecording) {
+            // Stop recording
+            if (isRecording) {
+                stopSpeechToText();
+            }
+            if (isVideoRecording) {
+                stopVideoRecording();
+            }
+            setIsRecording(false);
+            setIsVideoRecording(false);
+        } else {
+            // Start recording both audio and video
+            try {
+                setIsRecording(true);
+                setIsVideoRecording(true);
+                
+                // Start audio recording
+                startSpeechToText();
+                
+                // Start video recording
+                await startVideoRecording();
+                
+                toast.success('Recording started (audio + video)');
+            } catch (error) {
+                console.error('Error starting recording:', error);
+                setIsRecording(false);
+                setIsVideoRecording(false);
+                toast.error('Failed to start recording');
+            }
+        }
+    };
 
     // Start video recording with audio
     const startVideoRecording = async () => {
@@ -133,17 +167,15 @@ function RecordAnswerSection({
                 videoStream.getTracks().forEach(track => track.stop());
                 audioStream.getTracks().forEach(track => track.stop());
                 
-                toast.success('Video recorded and saved to uploads folder');
+                toast.success('Video recorded and saved');
             };
 
             mediaRecorderRef.current = mediaRecorder;
             mediaRecorder.start();
-            setIsVideoRecording(true);
-            
-            toast.success('Video recording started');
         } catch (error) {
             console.error('Error starting video recording:', error);
             toast.error('Failed to start video recording');
+            throw error;
         }
     };
 
@@ -151,7 +183,6 @@ function RecordAnswerSection({
     const stopVideoRecording = () => {
         if (mediaRecorderRef.current && isVideoRecording) {
             mediaRecorderRef.current.stop();
-            setIsVideoRecording(false);
             toast.info('Video recording stopped');
         }
     };
@@ -189,14 +220,6 @@ function RecordAnswerSection({
             toast.error(`Network error: ${error.message}`);
         }
     };
-
-    const StartStopRecording = async () => {
-        if (isRecording) {
-            stopSpeechToText()
-        } else {
-            startSpeechToText();
-        }
-    }
 
     // Save answer logic
     const UpdateUserAnswer = async () => {
@@ -283,119 +306,46 @@ function RecordAnswerSection({
     };
 
     return (
-        <div className='flex items-center justify-center flex-col'>
-            <div className='flex flex-col mt-20 justify-center items-center bg-black rounded-lg p-5'>
-                <Image src={'/webcam.png'} width={200} height={200} alt='webcam'
-                    className='absolute' />
-                <Webcam
-                    ref={webcamRef}
-                    mirrored={true}
-                    style={{
-                        height: 500,
-                        width: 500,
-                        zIndex: 10,
-                    }}
-                />
-            </div>
-            
-            {/* Video Recording Controls */}
-            <div className="flex gap-4 my-4">
-                <Button
-                    disabled={loading || isVideoRecording}
-                    variant="outline"
-                    onClick={startVideoRecording}
-                    className="flex gap-2 items-center"
-                >
-                    <Video className="h-5 w-5" />
-                    Start Video Recording
-                </Button>
-                
-                <Button
-                    disabled={loading || !isVideoRecording}
-                    variant="destructive"
-                    onClick={stopVideoRecording}
-                    className="flex gap-2 items-center"
-                >
-                    <StopCircle className="h-5 w-5" />
-                    Stop Video Recording
-                </Button>
-            </div>
-
-            {/* Audio Recording Button */}
+        <div className='flex items-center justify-center flex-col space-y-4'>
+            {/* Unified Recording Button */}
             <Button
                 disabled={loading}
-                variant="outline" 
-                className="my-4"
-                onClick={StartStopRecording}
+                variant={isRecording || isVideoRecording ? "destructive" : "default"}
+                className="px-8 py-3 text-lg font-medium"
+                onClick={handleRecording}
             >
-                {isRecording ? (
-                    <h2 className='text-foreground animate-pulse flex gap-2 items-center'>
-                        <Mic className="h-5 w-5" />
-                        Recording Audio...
-                    </h2>
+                {isRecording || isVideoRecording ? (
+                    <div className='flex gap-2 items-center'>
+                        <StopCircle className="h-5 w-5" />
+                        Stop Recording
+                    </div>
                 ) : (
-                    <h2 className='text-foreground flex gap-2 items-center'>
+                    <div className='flex gap-2 items-center'>
                         <Mic className="h-5 w-5" />
-                        Click to Record Audio
-                    </h2>
+                        Start Recording
+                    </div>
                 )}
             </Button>
 
             {/* Recording Status */}
-            <div className="mb-4 text-center">
-                {isVideoRecording && (
-                    <div className="text-red-500 font-semibold animate-pulse">
-                        🎥 Video Recording in Progress...
+            <div className="text-center">
+                {(isRecording || isVideoRecording) && (
+                    <div className="text-destructive font-semibold animate-pulse">
+                        🎤🎥 Recording Audio & Video...
                     </div>
                 )}
-                {isRecording && (
-                    <div className="text-blue-500 font-semibold animate-pulse">
-                        🎤 Audio Recording in Progress...
-                    </div>
-                )}
-                <div className="text-sm text-muted-foreground mt-2">
-                    📁 Videos will be saved to: <code className="bg-muted px-1 rounded">uploads/</code>
-                </div>
             </div>
 
-            {/* Show live transcription */}
-            <div className="w-full max-w-lg min-h-[40px] p-2 border rounded bg-background text-foreground text-center mb-4">
-                <strong>Live Transcription:</strong> {interimResult || latestTranscript || <span className="text-gray-400">(Say something...)</span>}
+            {/* Live Transcription */}
+            <div className="w-full max-w-lg min-h-[40px] p-3 border rounded-lg bg-muted text-foreground text-center">
+                <strong>Live Transcription:</strong> {interimResult || latestTranscript || <span className="text-muted-foreground">(Say something...)</span>}
             </div>
 
             {/* Recorded Video Preview */}
             {recordedVideoUrl && (
-                <div className="mt-4 text-center">
-                    <h3 className="font-semibold mb-2">Recorded Video (Saved to uploads/):</h3>
-                    <video 
-                        controls 
-                        width="400" 
-                        height="300" 
-                        className="border rounded"
-                    >
-                        <source src={recordedVideoUrl} type="video/webm" />
-                        Your browser does not support the video tag.
-                    </video>
-                    <div className="mt-2">
-                        <p className="text-sm text-muted-foreground mb-2">
-                            Video saved to uploads folder. Click below to download locally.
-                        </p>
-                        <Button
-                            variant="outline"
-                            onClick={() => {
-                                const a = document.createElement('a');
-                                a.href = recordedVideoUrl;
-                                a.download = 'temp.mp4';
-                                document.body.appendChild(a);
-                                a.click();
-                                document.body.removeChild(a);
-                            }}
-                            className="flex gap-2 items-center mx-auto"
-                        >
-                            <Download className="h-4 w-4" />
-                            Download temp.mp4
-                        </Button>
-                        
+                <div className="mt-4 text-center space-y-4">
+                    <h3 className="font-semibold">Video Analysis</h3>
+                    <div className="space-y-2">
                         {/* Analyze Video Button */}
                         <Button
                             disabled={loading}
@@ -421,7 +371,7 @@ function RecordAnswerSection({
                                         } else {
                                             setAnalysisCompleted(true);
                                             setMlAnalysisResult(result);
-                                            toast.success('Video analysis completed! View your results below.');
+                                            toast.success('Video analysis completed!');
                                         }
                                     } else {
                                         toast.error('Failed to analyze video');
@@ -433,131 +383,30 @@ function RecordAnswerSection({
                                     setLoading(false);
                                 }
                             }}
-                            className="flex gap-2 items-center bg-green-600 hover:bg-green-700 mt-2"
+                            className="flex gap-2 items-center mx-auto"
                         >
                             <Download className="h-5 w-5" />
-                            {loading ? 'Analyzing...' : 'Analyze Video Response'}
+                            {loading ? 'Analyzing...' : 'Analyze Video'}
                         </Button>
                         
                         {/* View Feedback Button */}
                         {analysisCompleted && (
                             <div className="mt-4 space-y-2">
-                                <div className="text-sm text-green-600 font-medium">
-                                    ✅ Video analysis completed successfully!
+                                <div className="text-sm text-green-600 dark:text-green-400 font-medium">
+                                    ✅ Video analysis completed!
                                 </div>
-                                <div className="flex gap-2 justify-center">
-                                    <Button
-                                        variant="outline"
-                                        onClick={() => {
-                                            setAnalysisCompleted(false);
-                                            setRecordedVideoUrl(null);
-                                            setMlAnalysisResult(null);
-                                        }}
-                                        className="flex gap-2 items-center"
-                                    >
-                                        <Video className="h-5 w-5" />
-                                        Record New Video
-                                    </Button>
-                                </div>
-                            </div>
-                        )}
-                        
-                        {/* ML Analysis Results */}
-                        {mlAnalysisResult && (
-                            <div className="mt-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
-                                <h4 className="font-bold text-blue-900 mb-4 text-center text-lg">
-                                    😊 FACIAL EXPRESSION ANALYSIS
-                                </h4>
-                                
-                                {/* Duration */}
-                                <div className="mb-4 text-center">
-                                    <p className="text-sm text-blue-700">
-                                        ⏱️ Duration: {mlAnalysisResult.duration_seconds || mlAnalysisResult.facial_metrics?.duration_seconds || 'N/A'} seconds
-                                    </p>
-                                </div>
-                                
-                                {/* Facial Metrics */}
-                                <div className="mb-6">
-                                    <h5 className="font-semibold text-blue-800 mb-3 text-center">
-                                        📊 FACIAL METRICS:
-                                    </h5>
-                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                                        <div className="bg-white p-3 rounded-lg border text-center">
-                                            <div className="text-2xl font-bold text-blue-600">
-                                                {mlAnalysisResult.facial_analysis?.face_visibility || mlAnalysisResult.facial_metrics?.face_visibility || 0}%
-                                            </div>
-                                            <div className="text-sm text-gray-600">Face Visibility</div>
-                                        </div>
-                                        <div className="bg-white p-3 rounded-lg border text-center">
-                                            <div className="text-2xl font-bold text-blue-600">
-                                                {mlAnalysisResult.facial_analysis?.eye_contact || mlAnalysisResult.facial_metrics?.eye_contact || 0}%
-                                            </div>
-                                            <div className="text-sm text-gray-600">Eye Contact</div>
-                                        </div>
-                                        <div className="bg-white p-3 rounded-lg border text-center">
-                                            <div className="text-2xl font-bold text-blue-600">
-                                                {mlAnalysisResult.facial_analysis?.facial_stability || mlAnalysisResult.facial_metrics?.facial_stability || 0}%
-                                            </div>
-                                            <div className="text-sm text-gray-600">Facial Stability</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                
-                                {/* Facial Expression Feedback */}
-                                <div className="mb-6">
-                                    <h5 className="font-semibold text-blue-800 mb-3">
-                                        💬 FACIAL EXPRESSION FEEDBACK:
-                                    </h5>
-                                    <div className="bg-white p-4 rounded-lg border">
-                                        <p className="text-sm text-gray-700 leading-relaxed">
-                                            {mlAnalysisResult.facial_expression_feedback || mlAnalysisResult.facialAnalysis?.feedback || 'No feedback available'}
-                                        </p>
-                                    </div>
-                                </div>
-                                
-                                {/* Facial Expression Suggestions */}
-                                <div className="mb-4">
-                                    <h5 className="font-semibold text-blue-800 mb-3">
-                                        💡 FACIAL EXPRESSION SUGGESTIONS:
-                                    </h5>
-                                    <div className="bg-white p-4 rounded-lg border">
-                                        <ul className="space-y-2">
-                                            {(mlAnalysisResult.facial_suggestions || mlAnalysisResult.facialAnalysis?.suggestions || []).map((suggestion, index) => (
-                                                <li key={index} className="flex items-start text-sm text-gray-700">
-                                                    <span className="text-blue-500 mr-2 font-bold">•</span>
-                                                    <span>{suggestion}</span>
-                                                </li>
-                                            ))}
-                                        </ul>
-                                    </div>
-                                </div>
-                                
-                                {/* Speech Analysis (if available) */}
-                                {mlAnalysisResult.speechAnalysis && (
-                                    <div className="mt-6 pt-4 border-t border-blue-200">
-                                        <h5 className="font-semibold text-blue-800 mb-3">
-                                            🎤 SPEECH ANALYSIS:
-                                        </h5>
-                                        <div className="bg-white p-4 rounded-lg border">
-                                            <p className="text-sm text-gray-700 mb-2">
-                                                <strong>Feedback:</strong> {mlAnalysisResult.speechAnalysis.feedback}
-                                            </p>
-                                            {mlAnalysisResult.speechAnalysis.suggestions && mlAnalysisResult.speechAnalysis.suggestions.length > 0 && (
-                                                <div>
-                                                    <p className="text-sm font-medium text-blue-700 mb-1">Suggestions:</p>
-                                                    <ul className="text-sm text-gray-600 space-y-1">
-                                                        {mlAnalysisResult.speechAnalysis.suggestions.map((suggestion, index) => (
-                                                            <li key={index} className="flex items-start">
-                                                                <span className="text-blue-500 mr-2">•</span>
-                                                                {suggestion}
-                                                            </li>
-                                                        ))}
-                                                    </ul>
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
+                                <Button
+                                    variant="outline"
+                                    onClick={() => {
+                                        setAnalysisCompleted(false);
+                                        setRecordedVideoUrl(null);
+                                        setMlAnalysisResult(null);
+                                    }}
+                                    className="flex gap-2 items-center mx-auto"
+                                >
+                                    <Video className="h-5 w-5" />
+                                    Record New Video
+                                </Button>
                             </div>
                         )}
                     </div>
