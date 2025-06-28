@@ -33,7 +33,7 @@ export function TimeRemaining({ startTime }: { startTime: string }) {
   }, [startTime]);
 
   return (
-    <Badge variant="outline" className="flex items-center gap-1">
+    <Badge variant="outline" className="flex items-center gap-1 border-border text-muted-foreground">
       <Clock className="h-3 w-3" />
       <span>Starts in {timeLeft}</span>
     </Badge>

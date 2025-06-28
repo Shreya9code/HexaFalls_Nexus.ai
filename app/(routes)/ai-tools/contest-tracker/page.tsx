@@ -96,8 +96,8 @@ export default function ContestTrackerPage() {
   }, [contests, search, platform]);
 
   return (
-    <div className="min-h-screen p-6 bg-gray-50">
-      <h1 className="text-3xl font-bold mb-6">🔥 Upcoming Contests</h1>
+    <div className="min-h-screen p-6 bg-background text-foreground">
+      <h1 className="text-3xl font-bold mb-6 text-foreground">🔥 Upcoming Contests</h1>
 
       {/* Search and Filter */}
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
@@ -106,12 +106,12 @@ export default function ContestTrackerPage() {
           placeholder="Search contests or platforms..."
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className="px-3 py-2 border rounded w-full sm:w-1/2"
+          className="px-3 py-2 border border-border rounded-lg w-full sm:w-1/2 bg-background text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors"
         />
         <select
           value={platform}
           onChange={(e) => setPlatform(e.target.value)}
-          className="px-3 py-2 border rounded w-full sm:w-1/4"
+          className="px-3 py-2 border border-border rounded-lg w-full sm:w-1/4 bg-background text-foreground focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent transition-colors"
         >
           <option value="All">All Platforms</option>
           {PLATFORMS.map((p) => (
@@ -125,11 +125,11 @@ export default function ContestTrackerPage() {
       {/* Loading State */}
       {loading ? (
         <div className="flex justify-center items-center h-40">
-          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-blue-600"></div>
+          <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
         </div>
       ) : filteredContests.length === 0 ? (
         // Empty State
-        <div className="flex flex-col items-center text-gray-500 mt-10">
+        <div className="flex flex-col items-center text-muted-foreground mt-10">
           <img src="/public/robot.mp4" alt="No contests" className="w-32 h-32 mb-4" />
           <p>No contests found. Try a different search or check back later!</p>
         </div>
@@ -155,19 +155,19 @@ export default function ContestTrackerPage() {
             return (
               <div
                 key={i}
-                className="bg-card p-5 rounded-xl shadow hover:shadow-lg transition"
+                className="bg-card text-card-foreground p-5 rounded-xl shadow-sm border border-border hover:shadow-md hover:border-border/50 transition-all duration-200"
               >
                 <div className="flex items-center gap-2 mb-2">
                   <ContestPlatformIcon platform={mapPlatformToIconKey(c.platform)} />
-                  <h2 className="text-xl font-semibold">{c.name}</h2>
+                  <h2 className="text-xl font-semibold text-card-foreground">{c.name}</h2>
                 </div>
                 <p className="text-sm text-muted-foreground mb-1">
-                  Platform: <span className="font-medium">{c.platform}</span>
+                  Platform: <span className="font-medium text-card-foreground">{c.platform}</span>
                 </p>
-                <p className="text-sm text-blue-600 mb-1">
+                <p className="text-sm text-primary mb-1">
                   Starts: {new Date(c.startTime).toLocaleString()}
                 </p>
-                <p className="text-sm text-gray-700 mb-1">
+                <p className="text-sm text-muted-foreground mb-1">
                   Duration: {Math.floor(c.duration / 3600)}h {((c.duration % 3600) / 60).toFixed(0)}m
                 </p>
                 <div className="mb-2">
@@ -177,7 +177,7 @@ export default function ContestTrackerPage() {
                   href={c.url}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="inline-block mt-2 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 text-sm"
+                  className="inline-block mt-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 text-sm font-medium transition-colors duration-200"
                 >
                   Join Contest
                 </a>
@@ -185,7 +185,7 @@ export default function ContestTrackerPage() {
                   href={calendarUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="block mt-2 text-sm text-blue-500 hover:underline"
+                  className="block mt-2 text-sm text-primary hover:text-primary/80 hover:underline transition-colors duration-200"
                 >
                   📅 Add to Google Calendar
                 </a>

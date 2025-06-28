@@ -39,6 +39,13 @@ const tools = [
     button: "View Contests",
     path: "/ai-tools/contest-tracker",
   },
+  {
+    name: "Quiz",
+    desc: "Test your knowledge and skills with AI-generated quizzes. Compete on the leaderboard and track your progress.",
+    icon: "/grid.svg",
+    button: "Start Quiz",
+    path: "/ai-tools/quiz",
+  },
 ];
 
 const AiTools = () => {

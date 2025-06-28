@@ -63,14 +63,14 @@ const items = [
         icon: BarChart3,
     },
     {
-        title: "Industry Insights",
-        url: "/ai-tools/industry-insights",
-        icon: Inbox,
-    },
-    {
         title: "Quiz",
         url: "/ai-tools/quiz",
         icon: Layers,
+    },
+    {
+        title: "Industry Insights",
+        url: "/ai-tools/industry-insights",
+        icon: Inbox,
     },
     {
         title: "Upgrade",

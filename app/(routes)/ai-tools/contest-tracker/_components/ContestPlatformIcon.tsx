@@ -20,15 +20,15 @@ export function ContestPlatformIcon({
   className = "h-5 w-5",
 }: ContestPlatformIconProps) {
   const platformIcons = {
-    codeforces: <Code2 className={className} />,
-    codechef: <BookOpen className={className} />,
-    atcoder: <Gem className={className} />,
-    leetcode: <Trophy className={className} />,
-    hackerrank: <Shield className={className} />,
-    hackerearth: <Bookmark className={className} />,
-    topcoder: <Zap className={className} />,
-    kickstart: <Code2 className={className} />,
-    other: <AlertTriangle className={className} />,
+    codeforces: <Code2 className={`${className} text-card-foreground`} />,
+    codechef: <BookOpen className={`${className} text-card-foreground`} />,
+    atcoder: <Gem className={`${className} text-card-foreground`} />,
+    leetcode: <Trophy className={`${className} text-card-foreground`} />,
+    hackerrank: <Shield className={`${className} text-card-foreground`} />,
+    hackerearth: <Bookmark className={`${className} text-card-foreground`} />,
+    topcoder: <Zap className={`${className} text-card-foreground`} />,
+    kickstart: <Code2 className={`${className} text-card-foreground`} />,
+    other: <AlertTriangle className={`${className} text-card-foreground`} />,
   };
 
   return platformIcons[platform] || platformIcons.other;

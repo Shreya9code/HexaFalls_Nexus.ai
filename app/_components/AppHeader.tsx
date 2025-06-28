@@ -65,7 +65,7 @@ function AppHeader() {
                                     }
                                 } catch {}
                             }}
-                            className="ml-2 px-3 py-1 bg-blue-600 text-white rounded-full text-sm font-semibold select-none transition-colors hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                            className="ml-2 px-3 py-1 bg-primary text-primary-foreground rounded-full text-sm font-semibold select-none transition-colors hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-ring"
                             title="Refresh XP"
                         >
                             XP: {xp}
@@ -73,10 +73,10 @@ function AppHeader() {
                     )}
                     <button className="p-2 hover:bg-accent rounded-lg transition-colors relative">
                         <Bell className="h-5 w-5 text-foreground" />
-                        <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full"></span>
+                        <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full"></span>
                     </button>
                     <Link href="/upgrade">
-                        <span className="px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors">Upgrade</span>
+                        <span className="px-4 py-2 bg-primary text-primary-foreground rounded-lg font-semibold hover:bg-primary/90 transition-colors">Upgrade</span>
                     </Link>
                     <UserButton 
                         appearance={{
