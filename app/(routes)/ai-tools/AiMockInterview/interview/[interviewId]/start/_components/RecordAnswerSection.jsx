@@ -5,13 +5,14 @@ import Image from 'next/image'
 import React, { useEffect,useRef, useState } from 'react'
 import Webcam from 'react-webcam'
 import useSpeechToText from 'react-hook-speech-to-text';
-import { Mic, StopCircle, Video, Download } from 'lucide-react'
+import { Mic, StopCircle, Video, Download, Eye } from 'lucide-react'
 import { toast } from 'sonner'
 import { chatSession } from '@/utils/GeminiAIModal'
 import { db } from '@/configs/db'
 import { UserAnswer } from '@/configs/schema'
 import { useUser } from '@clerk/nextjs'
 import moment from 'moment'
+import { useRouter } from 'next/navigation'
 const ASSEMBLYAI_API_KEY = "9b7b08f286fa46c2a2e10242b7de56e7";
 const WS_URL = `wss://api.assemblyai.com/v2/realtime/ws?sample_rate=16000`;
 
@@ -26,10 +27,13 @@ function RecordAnswerSection({
     const [loading, setLoading] = useState(false);
     const [isVideoRecording, setIsVideoRecording] = useState(false);
     const [recordedVideoUrl, setRecordedVideoUrl] = useState(null);
+    const [analysisCompleted, setAnalysisCompleted] = useState(false);
+    const [mlAnalysisResult, setMlAnalysisResult] = useState(null);
     const mediaRecorderRef = useRef(null);
     const videoStreamRef = useRef(null);
     const audioStreamRef = useRef(null);
     const webcamRef = useRef(null);
+    const router = useRouter();
     
     const {
         error,
@@ -74,6 +78,9 @@ function RecordAnswerSection({
     // Start video recording with audio
     const startVideoRecording = async () => {
         try {
+            // Reset analysis state
+            setAnalysisCompleted(false);
+            
             // Get video stream from webcam
             const videoStream = await navigator.mediaDevices.getUserMedia({ 
                 video: { 
@@ -388,6 +395,171 @@ function RecordAnswerSection({
                             <Download className="h-4 w-4" />
                             Download temp.mp4
                         </Button>
+                        
+                        {/* Analyze Video Button */}
+                        <Button
+                            disabled={loading}
+                            variant="default"
+                            onClick={async () => {
+                                try {
+                                    setLoading(true);
+                                    const response = await fetch('/api/analyze-video', {
+                                        method: 'POST',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({
+                                            videoPath: 'uploads/temp.mp4',
+                                            questionText: mockInterviewQuestion[activeQuestionIndex]?.question || ''
+                                        })
+                                    });
+
+                                    if (response.ok) {
+                                        const result = await response.json();
+                                        if (result.error) {
+                                            toast.error(result.error);
+                                        } else {
+                                            setAnalysisCompleted(true);
+                                            setMlAnalysisResult(result);
+                                            toast.success('Video analysis completed! View your results below.');
+                                        }
+                                    } else {
+                                        toast.error('Failed to analyze video');
+                                    }
+                                } catch (error) {
+                                    console.error('Error analyzing video:', error);
+                                    toast.error('Failed to analyze video');
+                                } finally {
+                                    setLoading(false);
+                                }
+                            }}
+                            className="flex gap-2 items-center bg-green-600 hover:bg-green-700 mt-2"
+                        >
+                            <Download className="h-5 w-5" />
+                            {loading ? 'Analyzing...' : 'Analyze Video Response'}
+                        </Button>
+                        
+                        {/* View Feedback Button */}
+                        {analysisCompleted && (
+                            <div className="mt-4 space-y-2">
+                                <div className="text-sm text-green-600 font-medium">
+                                    ✅ Video analysis completed successfully!
+                                </div>
+                                <div className="flex gap-2 justify-center">
+                                    <Button
+                                        variant="outline"
+                                        onClick={() => {
+                                            setAnalysisCompleted(false);
+                                            setRecordedVideoUrl(null);
+                                            setMlAnalysisResult(null);
+                                        }}
+                                        className="flex gap-2 items-center"
+                                    >
+                                        <Video className="h-5 w-5" />
+                                        Record New Video
+                                    </Button>
+                                </div>
+                            </div>
+                        )}
+                        
+                        {/* ML Analysis Results */}
+                        {mlAnalysisResult && (
+                            <div className="mt-6 p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
+                                <h4 className="font-bold text-blue-900 mb-4 text-center text-lg">
+                                    😊 FACIAL EXPRESSION ANALYSIS
+                                </h4>
+                                
+                                {/* Duration */}
+                                <div className="mb-4 text-center">
+                                    <p className="text-sm text-blue-700">
+                                        ⏱️ Duration: {mlAnalysisResult.duration_seconds || mlAnalysisResult.facial_metrics?.duration_seconds || 'N/A'} seconds
+                                    </p>
+                                </div>
+                                
+                                {/* Facial Metrics */}
+                                <div className="mb-6">
+                                    <h5 className="font-semibold text-blue-800 mb-3 text-center">
+                                        📊 FACIAL METRICS:
+                                    </h5>
+                                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+                                        <div className="bg-white p-3 rounded-lg border text-center">
+                                            <div className="text-2xl font-bold text-blue-600">
+                                                {mlAnalysisResult.facial_analysis?.face_visibility || mlAnalysisResult.facial_metrics?.face_visibility || 0}%
+                                            </div>
+                                            <div className="text-sm text-gray-600">Face Visibility</div>
+                                        </div>
+                                        <div className="bg-white p-3 rounded-lg border text-center">
+                                            <div className="text-2xl font-bold text-blue-600">
+                                                {mlAnalysisResult.facial_analysis?.eye_contact || mlAnalysisResult.facial_metrics?.eye_contact || 0}%
+                                            </div>
+                                            <div className="text-sm text-gray-600">Eye Contact</div>
+                                        </div>
+                                        <div className="bg-white p-3 rounded-lg border text-center">
+                                            <div className="text-2xl font-bold text-blue-600">
+                                                {mlAnalysisResult.facial_analysis?.facial_stability || mlAnalysisResult.facial_metrics?.facial_stability || 0}%
+                                            </div>
+                                            <div className="text-sm text-gray-600">Facial Stability</div>
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                {/* Facial Expression Feedback */}
+                                <div className="mb-6">
+                                    <h5 className="font-semibold text-blue-800 mb-3">
+                                        💬 FACIAL EXPRESSION FEEDBACK:
+                                    </h5>
+                                    <div className="bg-white p-4 rounded-lg border">
+                                        <p className="text-sm text-gray-700 leading-relaxed">
+                                            {mlAnalysisResult.facial_expression_feedback || mlAnalysisResult.facialAnalysis?.feedback || 'No feedback available'}
+                                        </p>
+                                    </div>
+                                </div>
+                                
+                                {/* Facial Expression Suggestions */}
+                                <div className="mb-4">
+                                    <h5 className="font-semibold text-blue-800 mb-3">
+                                        💡 FACIAL EXPRESSION SUGGESTIONS:
+                                    </h5>
+                                    <div className="bg-white p-4 rounded-lg border">
+                                        <ul className="space-y-2">
+                                            {(mlAnalysisResult.facial_suggestions || mlAnalysisResult.facialAnalysis?.suggestions || []).map((suggestion, index) => (
+                                                <li key={index} className="flex items-start text-sm text-gray-700">
+                                                    <span className="text-blue-500 mr-2 font-bold">•</span>
+                                                    <span>{suggestion}</span>
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+                                </div>
+                                
+                                {/* Speech Analysis (if available) */}
+                                {mlAnalysisResult.speechAnalysis && (
+                                    <div className="mt-6 pt-4 border-t border-blue-200">
+                                        <h5 className="font-semibold text-blue-800 mb-3">
+                                            🎤 SPEECH ANALYSIS:
+                                        </h5>
+                                        <div className="bg-white p-4 rounded-lg border">
+                                            <p className="text-sm text-gray-700 mb-2">
+                                                <strong>Feedback:</strong> {mlAnalysisResult.speechAnalysis.feedback}
+                                            </p>
+                                            {mlAnalysisResult.speechAnalysis.suggestions && mlAnalysisResult.speechAnalysis.suggestions.length > 0 && (
+                                                <div>
+                                                    <p className="text-sm font-medium text-blue-700 mb-1">Suggestions:</p>
+                                                    <ul className="text-sm text-gray-600 space-y-1">
+                                                        {mlAnalysisResult.speechAnalysis.suggestions.map((suggestion, index) => (
+                                                            <li key={index} className="flex items-start">
+                                                                <span className="text-blue-500 mr-2">•</span>
+                                                                {suggestion}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
                     </div>
                 </div>
             )}

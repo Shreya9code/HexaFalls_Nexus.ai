@@ -222,7 +222,35 @@ export default function GetFeedback({ params }) {
                             Return to Interviews
                         </Button>
                     </div>
+                ) : answers.length < 10 ? (
+                    // Show message to complete interview if not all questions are answered
+                    <div className="text-center space-y-6">
+                        <div className="mx-auto w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+                            <Clock className="w-8 h-8 text-blue-600" />
+                        </div>
+                        <h1 className="text-3xl font-bold text-gray-900">Interview In Progress</h1>
+                        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+                            You've completed {answers.length} out of 10 questions. 
+                            Please finish the interview to see your comprehensive feedback and analysis.
+                        </p>
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <Button
+                                onClick={() => router.push(`/ai-tools/AiMockInterview/interview/${interviewId}/start`)}
+                                className="bg-primary hover:bg-primary/90"
+                            >
+                                Continue Interview
+                            </Button>
+                            <Button
+                                onClick={() => router.push('/ai-tools/AiMockInterview')}
+                                variant="outline"
+                            >
+                                <ArrowLeft className="w-4 h-4 mr-2" />
+                                Back to Interviews
+                            </Button>
+                        </div>
+                    </div>
                 ) : (
+                    // Show comprehensive feedback only when all 10 questions are completed
                     <div className="space-y-8">
                         {/* Header Section */}
                         <div className="text-center space-y-4">
