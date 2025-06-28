@@ -7,7 +7,7 @@ import "reactflow/dist/style.css";
 import { toPng } from "html-to-image";
 import dagre from "dagre";
 import { jsPDF } from 'jspdf';
-/*
+
 // Enhanced color palette for nodes (with gradients)
 const nodeGradients = [
   'bg-gradient-to-br from-blue-400 to-purple-500',
@@ -62,7 +62,7 @@ const CustomNode = ({ data, id, selected, xPos, yPos, ...props }: any) => {
 };
 
 // Move nodeTypes outside the component
-const nodeTypes = { custom: CustomNode };*/
+const nodeTypes = { custom: CustomNode };
 
 const RoadmapGeneratorAgent = () => {
   const params = useParams();
@@ -151,7 +151,7 @@ const RoadmapGeneratorAgent = () => {
       style: { zIndex: 10 },
     };
   });
-/*
+
   // Vibrant edge colors
   const edgeColors = [
     '#6366f1', '#f43f5e', '#06b6d4', '#f59e42', '#a21caf', '#10b981', '#eab308', '#f472b6', '#3b82f6', '#84cc16',
@@ -168,7 +168,7 @@ const RoadmapGeneratorAgent = () => {
       type: 'arrowclosed',
       color: edgeColors[parseInt(edge.id, 10) % edgeColors.length],
     },
-  }));*/
+  }));
 
   // Debug logs
   console.log('roadmapDetails', roadmapDetails);
@@ -177,7 +177,7 @@ const RoadmapGeneratorAgent = () => {
 
   nodes.forEach((n: any) => console.log(`Node ${n.id} position:`, n.position));
 
-  /*const handleExport = async () => {
+  const handleExport = async () => {
     setShowMiniMap(false);
     setTimeout(async () => {
       const wrapper = reactFlowWrapper.current;
@@ -199,7 +199,7 @@ const RoadmapGeneratorAgent = () => {
         setShowMiniMap(true);
       }
     }, 200);
-  };*/
+  };
 
   return (
     <div className="container mx-auto px-4 py-8">
