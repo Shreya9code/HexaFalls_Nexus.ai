@@ -42,6 +42,20 @@ HexaFalls_Nexus.ai/
 ├── public/ # Static assets
 └── styles/ # Global CSS
 
+## 🔗 AI-Powered User Journey
+
+```mermaid
+%% Uncomment this if your MD renderer supports Mermaid
+%% <div class="mermaid">
+graph LR
+    A[🔮 Career Chat] -->|"Analyze goals"| B[🗺️ Roadmap Generator]
+    B -->|"Identify gaps"| C[🧠 Knowledge Quiz]
+    C -->|"Target weak areas"| D[🏆 Contest Tracker]
+    D -->|"Earn credentials"| E[📜 Resume Analyzer]
+    E -->|"Optimize profile"| F[🎤 Mock Interview]
+    F -->|"Prepare for roles"| A
+%% </div>
+```
 ## Tech Stack
 
 - **Frontend**: Next.js 14, Tailwind CSS, ShadCN/ui
