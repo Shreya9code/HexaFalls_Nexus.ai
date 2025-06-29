@@ -439,8 +439,13 @@ function StartInterview({ params }) {
 
         {/* Analysis Section - Below both windows */}
         <div className="bg-card border rounded-lg p-6">
-          <h2 className="text-lg font-semibold text-foreground mb-4 text-center">
+          <h2 className="text-lg font-semibold text-foreground mb-4 text-center flex items-center justify-center gap-2">
             📊 Video Analysis Results
+            {mlAnalysisResult && (
+              <span className="text-sm text-green-600 bg-green-100 px-2 py-1 rounded-full">
+                ✅ Analysis Complete
+              </span>
+            )}
           </h2>
           <div className="space-y-4">
             {/* Analysis content will be rendered here */}
@@ -448,46 +453,68 @@ function StartInterview({ params }) {
               <div className="space-y-6">
                 {/* Duration and Metrics Row */}
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="bg-background p-4 rounded-lg border text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Duration</div>
-                    <div className="text-xl font-bold text-primary">
-                      {mlAnalysisResult.duration_seconds || mlAnalysisResult.facial_metrics?.duration_seconds || 'N/A'}s
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 p-4 rounded-lg border border-blue-200 text-center">
+                    <div className="text-sm text-blue-600 mb-1 font-medium">⏱️ Duration</div>
+                    <div className="text-xl font-bold text-blue-800">
+                      {mlAnalysisResult.duration_seconds || 'N/A'}s
                     </div>
                   </div>
-                  <div className="bg-background p-4 rounded-lg border text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Face Visibility</div>
-                    <div className="text-xl font-bold text-primary">
-                      {mlAnalysisResult.facial_analysis?.face_visibility || mlAnalysisResult.facial_metrics?.face_visibility || 0}%
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 p-4 rounded-lg border border-green-200 text-center">
+                    <div className="text-sm text-green-600 mb-1 font-medium">👁️ Face Visibility</div>
+                    <div className="text-xl font-bold text-green-800">
+                      {mlAnalysisResult.facial_metrics?.face_visibility?.toFixed(1) || 0}%
+                    </div>
+                    <div className="w-full bg-green-200 rounded-full h-1 mt-2">
+                      <div 
+                        className="bg-green-600 h-1 rounded-full transition-all duration-300"
+                        style={{ width: `${mlAnalysisResult.facial_metrics?.face_visibility || 0}%` }}
+                      ></div>
                     </div>
                   </div>
-                  <div className="bg-background p-4 rounded-lg border text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Eye Contact</div>
-                    <div className="text-xl font-bold text-primary">
-                      {mlAnalysisResult.facial_analysis?.eye_contact || mlAnalysisResult.facial_metrics?.eye_contact || 0}%
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200 text-center">
+                    <div className="text-sm text-purple-600 mb-1 font-medium">👀 Eye Contact</div>
+                    <div className="text-xl font-bold text-purple-800">
+                      {mlAnalysisResult.facial_metrics?.eye_contact?.toFixed(1) || 0}%
+                    </div>
+                    <div className="w-full bg-purple-200 rounded-full h-1 mt-2">
+                      <div 
+                        className="bg-purple-600 h-1 rounded-full transition-all duration-300"
+                        style={{ width: `${mlAnalysisResult.facial_metrics?.eye_contact || 0}%` }}
+                      ></div>
                     </div>
                   </div>
-                  <div className="bg-background p-4 rounded-lg border text-center">
-                    <div className="text-sm text-muted-foreground mb-1">Facial Stability</div>
-                    <div className="text-xl font-bold text-primary">
-                      {mlAnalysisResult.facial_analysis?.facial_stability || mlAnalysisResult.facial_metrics?.facial_stability || 0}%
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200 text-center">
+                    <div className="text-sm text-orange-600 mb-1 font-medium">🎯 Facial Stability</div>
+                    <div className="text-xl font-bold text-orange-800">
+                      {mlAnalysisResult.facial_metrics?.facial_stability?.toFixed(1) || 0}%
+                    </div>
+                    <div className="w-full bg-orange-200 rounded-full h-1 mt-2">
+                      <div 
+                        className="bg-orange-600 h-1 rounded-full transition-all duration-300"
+                        style={{ width: `${mlAnalysisResult.facial_metrics?.facial_stability || 0}%` }}
+                      ></div>
                     </div>
                   </div>
                 </div>
 
                 {/* Feedback and Suggestions Row */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-background p-4 rounded-lg border">
-                    <h5 className="font-semibold text-foreground mb-3">💬 Facial Expression Feedback</h5>
-                    <p className="text-sm text-foreground leading-relaxed">
-                      {mlAnalysisResult.facial_expression_feedback || mlAnalysisResult.facialAnalysis?.feedback || 'No feedback available'}
+                  <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 p-4 rounded-lg border border-emerald-200">
+                    <h5 className="font-semibold text-emerald-800 mb-3 flex items-center gap-2">
+                      💬 Facial Expression Feedback
+                    </h5>
+                    <p className="text-sm text-emerald-700 leading-relaxed">
+                      {mlAnalysisResult.facialAnalysis?.feedback || 'No feedback available'}
                     </p>
                   </div>
-                  <div className="bg-background p-4 rounded-lg border">
-                    <h5 className="font-semibold text-foreground mb-3">💡 Suggestions</h5>
+                  <div className="bg-gradient-to-br from-amber-50 to-amber-100 p-4 rounded-lg border border-amber-200">
+                    <h5 className="font-semibold text-amber-800 mb-3 flex items-center gap-2">
+                      💡 Suggestions
+                    </h5>
                     <ul className="space-y-1">
-                      {(mlAnalysisResult.facial_suggestions || mlAnalysisResult.facialAnalysis?.suggestions || []).slice(0, 3).map((suggestion, index) => (
-                        <li key={index} className="flex items-start text-sm text-foreground">
-                          <span className="text-primary mr-2 font-bold">•</span>
+                      {(mlAnalysisResult.speechAnalysis?.suggestions || []).slice(0, 3).map((suggestion, index) => (
+                        <li key={index} className="flex items-start text-sm text-amber-700">
+                          <span className="text-amber-600 mr-2 font-bold">•</span>
                           <span>{suggestion}</span>
                         </li>
                       ))}
@@ -497,18 +524,40 @@ function StartInterview({ params }) {
 
                 {/* Speech Analysis (if available) */}
                 {mlAnalysisResult.speechAnalysis && (
-                  <div className="bg-background p-4 rounded-lg border">
-                    <h5 className="font-semibold text-foreground mb-3">🎤 Speech Analysis</h5>
-                    <p className="text-sm text-foreground mb-2">
+                  <div className="bg-gradient-to-br from-indigo-50 to-indigo-100 p-4 rounded-lg border border-indigo-200">
+                    <h5 className="font-semibold text-indigo-800 mb-3 flex items-center gap-2">
+                      🎤 Speech Analysis
+                    </h5>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-3">
+                      <div className="text-center">
+                        <div className="text-sm text-indigo-600 mb-1">Confidence</div>
+                        <div className="text-lg font-bold text-indigo-800">
+                          {(mlAnalysisResult.speechAnalysis.confidence * 100).toFixed(1)}%
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm text-indigo-600 mb-1">Evaluation</div>
+                        <div className="text-lg font-bold text-indigo-800">
+                          {mlAnalysisResult.speechAnalysis.evaluation}
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="text-sm text-indigo-600 mb-1">Status</div>
+                        <div className="text-lg font-bold text-green-600">
+                          ✅ Complete
+                        </div>
+                      </div>
+                    </div>
+                    <p className="text-sm text-indigo-700 mb-2">
                       <strong>Feedback:</strong> {mlAnalysisResult.speechAnalysis.feedback}
                     </p>
                     {mlAnalysisResult.speechAnalysis.suggestions && mlAnalysisResult.speechAnalysis.suggestions.length > 0 && (
                       <div>
-                        <p className="text-sm font-medium text-primary mb-1">Suggestions:</p>
-                        <ul className="text-sm text-muted-foreground space-y-1">
+                        <p className="text-sm font-medium text-indigo-600 mb-1">Suggestions:</p>
+                        <ul className="text-sm text-indigo-700 space-y-1">
                           {mlAnalysisResult.speechAnalysis.suggestions.map((suggestion, index) => (
                             <li key={index} className="flex items-start">
-                              <span className="text-primary mr-2">•</span>
+                              <span className="text-indigo-500 mr-2">•</span>
                               {suggestion}
                             </li>
                           ))}
@@ -517,6 +566,15 @@ function StartInterview({ params }) {
                     )}
                   </div>
                 )}
+              </div>
+            )}
+            
+            {/* No Analysis State */}
+            {!mlAnalysisResult && (
+              <div className="text-center py-8 text-muted-foreground">
+                <div className="text-4xl mb-4">📹</div>
+                <p className="text-lg font-medium mb-2">No Video Analysis Yet</p>
+                <p className="text-sm">Record your answer and click "Analyze Video" to see detailed feedback</p>
               </div>
             )}
           </div>
@@ -553,6 +611,7 @@ function StartInterview({ params }) {
                 setActiveQuestionIndex(activeQuestionIndex - 1);
                 setShowFeedback(false);
                 setFeedbackData(null);
+                setMlAnalysisResult(null);
               }}
               variant="outline"
               className="px-6"
@@ -566,6 +625,7 @@ function StartInterview({ params }) {
                 setActiveQuestionIndex(activeQuestionIndex + 1);
                 setShowFeedback(false);
                 setFeedbackData(null);
+                setMlAnalysisResult(null);
               }}
               variant="outline"
               className="px-6"

@@ -20,7 +20,8 @@
     ],
     "paths": {
       "@/*": ["./*"]
-    }
+    },
+    "types": ["react", "react-dom", "node"]
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts", "components/header.jsx", "components/HeaderWrapper.jsx", "components/theme-provider.jsx", "components/hero.jsx", "app/(routes)/ai-tools/AiMockInterview/page.jsx", "app/api/AiMockInterview/route.js", "app/(routes)/ai-tools/contest-tracker/page.tsx"],
   "exclude": ["node_modules"]

@@ -26,6 +26,11 @@ interface AnalysisResult {
     feedback: string
   }
   isComplete: boolean
+  facial_metrics?: {
+    face_visibility: number
+    eye_contact: number
+    facial_stability: number
+  }
 }
 
 interface AnalysisResultsProps {
@@ -47,9 +52,9 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
 
   const getEvaluationIcon = (evaluation: string) => {
     return evaluation === 'POSITIVE' ? (
-      <CheckCircle className="w-5 h-5 text-green-600" />
+      <CheckCircle size={20} />
     ) : (
-      <AlertCircle className="w-5 h-5 text-yellow-600" />
+      <AlertCircle size={20} />
     )
   }
 
@@ -64,7 +69,7 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-xl font-semibold text-gray-900">Overall Performance</h3>
           <div className="flex items-center space-x-2">
-            <Star className="w-5 h-5 text-yellow-500" />
+            <Star size={20} />
             <span className="text-lg font-bold text-gray-900">
               {Math.round(result.speechAnalysis.confidence * 100)}%
             </span>
@@ -86,7 +91,7 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
         className="card"
       >
         <div className="flex items-center space-x-2 mb-4">
-          <Mic className="w-5 h-5 text-primary-600" />
+          <Mic size={20} />
           <h3 className="text-lg font-semibold text-gray-900">Speech Analysis</h3>
         </div>
         
@@ -114,7 +119,7 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
             <div>
               <h4 className="font-medium text-gray-700 mb-2">Confidence Score:</h4>
               <div className="flex items-center space-x-2">
-                <TrendingUp className="w-4 h-4 text-primary-600" />
+                <TrendingUp size={16} />
                 <span className={`text-sm font-medium ${getConfidenceColor(result.speechAnalysis.confidence)}`}>
                   {Math.round(result.speechAnalysis.confidence * 100)}%
                 </span>
@@ -134,7 +139,7 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
           {result.speechAnalysis.suggestions.length > 0 && (
             <div>
               <h4 className="font-medium text-gray-700 mb-2 flex items-center">
-                <Lightbulb className="w-4 h-4 mr-2 text-yellow-600" />
+                <Lightbulb size={16} />
                 Suggestions for Improvement:
               </h4>
               <ul className="space-y-2">
@@ -158,7 +163,7 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
         className="card"
       >
         <div className="flex items-center space-x-2 mb-4">
-          <Smile className="w-5 h-5 text-primary-600" />
+          <Smile size={20} />
           <h3 className="text-lg font-semibold text-gray-900">Facial Expression Analysis</h3>
         </div>
         
@@ -172,6 +177,55 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
               </span>
             </div>
           </div>
+
+          {/* Detailed Facial Metrics */}
+          {result.facial_metrics && (
+            <div className="space-y-3">
+              <h4 className="font-medium text-gray-700 mb-2">Detailed Metrics:</h4>
+              
+              {/* Face Visibility */}
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm text-gray-600">Face Visibility</span>
+                  <span className="text-sm font-medium text-gray-900">{result.facial_metrics.face_visibility.toFixed(1)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${result.facial_metrics.face_visibility}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Eye Contact */}
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm text-gray-600">Eye Contact</span>
+                  <span className="text-sm font-medium text-gray-900">{result.facial_metrics.eye_contact.toFixed(1)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-green-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${result.facial_metrics.eye_contact}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              {/* Facial Stability */}
+              <div>
+                <div className="flex justify-between items-center mb-1">
+                  <span className="text-sm text-gray-600">Facial Stability</span>
+                  <span className="text-sm font-medium text-gray-900">{result.facial_metrics.facial_stability.toFixed(1)}%</span>
+                </div>
+                <div className="w-full bg-gray-200 rounded-full h-2">
+                  <div 
+                    className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                    style={{ width: `${result.facial_metrics.facial_stability}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <div>
             <h4 className="font-medium text-gray-700 mb-2">Expression Feedback:</h4>
@@ -190,7 +244,7 @@ export default function AnalysisResults({ result }: AnalysisResultsProps) {
         className="card bg-gradient-to-r from-green-50 to-emerald-50 border-green-200"
       >
         <div className="flex items-center space-x-2 mb-4">
-          <MessageSquare className="w-5 h-5 text-green-600" />
+          <MessageSquare size={20} />
           <h3 className="text-lg font-semibold text-gray-900">Next Steps</h3>
         </div>
         
