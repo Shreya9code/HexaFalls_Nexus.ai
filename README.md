@@ -68,14 +68,3 @@ The easiest way to deploy your Next.js app is to use the [Vercel Platform](https
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
 
-## Quiz XP & Web3 Leaderboard Architecture
-
-```mermaid
-flowchart TD
-  Quiz-->|Earns XP|Backend
-  Backend-->|Update XP|DB[(Database)]
-  Backend-->|If wallet connected: call contract|Blockchain[(Smart Contract)]
-  User-->|Connect Wallet|Frontend
-  Frontend-->|Show XP, Leaderboard|User
-  Blockchain-->|Read XP|Frontend
-```
